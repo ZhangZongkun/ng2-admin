@@ -3,28 +3,38 @@ import { Router } from '@angular/router';
 import { Routes } from '@angular/router';
 import { Subject } from 'rxjs/Subject';
 import { Observable } from 'rxjs/Observable';
+import { List } from 'immutable';
 
 import { NgaMenuItem, NgaMenuModuleConfig } from './menu.options';
 
 @Injectable()
 export class NgaMenuService {
 
+  private items: List<NgaMenuItem>;
+  private itemsSubject = new Subject();
+
+  menuItems$: Observable<List<NgaMenuItem>> = this.itemsSubject.asObservable();
+
   constructor(@Optional() private config: NgaMenuModuleConfig,
                           private router: Router) {
+    this.items = List(this.config.menuItems);
   }
 
-  getMenuItems(): Observable<any> {
+  getMenuItems(): Observable<List<NgaMenuItem>> {
     return Observable.create((observer: any) => {
-      observer.next(this.config.menuItems);
+      observer.next(this.items);
+      observer.complete();
     });
   }
 
-  getCurrentMenuItem(): Observable<any> {
-    return Observable.create((observer: any) => {
-      observer.next();
-    });
+  addMenuItem(item: NgaMenuItem) {
+    const result = this.items.push(item);
+
+    this.itemsSubject.next(result);
+    this.itemsSubject.complete();
   }
 
-  addMenuItem(menuItem: NgaMenuItem) { }
+  selectMenuItem(item: NgaMenuItem) {
+  }
 
 }

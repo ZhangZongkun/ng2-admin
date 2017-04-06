@@ -15,14 +15,17 @@ export class NgaSidebarService {
 
   toggle(compact: boolean = false, tag?: string) {
     this.toggleSubject.next({ compact, tag });
+    this.toggleSubject.complete();
   }
 
   expand(tag?: string) {
     this.expandSubject.next({ tag });
+    this.toggleSubject.complete();
   }
 
   collapse(tag?: string) {
     this.collapseSubject.next({ tag });
+    this.collapseSubject.complete();
   }
 
 }
